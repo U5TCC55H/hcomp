@@ -58,32 +58,34 @@ void HuffmanTree::merge(int m1, int m2)
         {
             // 延长编码
             code[i].push_back(false);
+            code[i] <<= 1;
+            code[i][0] = false;
         }
         else if (root[i] == m2)
         {
             root[i] = m1;
             // 延长编码
-            code[i].push_back(true);
+            code[i].push_back(false);
+            code[i] <<= 1;
+            code[i][0] = true;
         }
     }
     weight[m1] += weight[m2];
 }
 
 void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs) {
-    int idx = bs.size() - 1;
+    unsigned int idx = 0;
     boost::dynamic_bitset<unsigned char> tmp;
-    while (idx >= 0)
+    while (idx < bs.size())
     {
-        tmp.push_back(0);
-        tmp <<= 1;
-        tmp[0] = bs[idx];
+        tmp.push_back(bs[idx]);
         int seek = find_match(tmp);
         if (seek != -1)
         {
             obs << (unsigned char)seek;
             tmp.resize(0);
         }
-        --idx;
+        ++idx;
     }
 }
 

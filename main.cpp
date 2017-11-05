@@ -92,7 +92,7 @@ void decompress(const char *fname, const char *foutname) {
     // 输出到文件
     buff = new unsigned char[obs.getNumElem()];
     for (int i = 0; i < obs.getNumElem(); ++i)
-        buff[i] = obs[obs.getNumElem() - 1 - i];
+        buff[i] = obs[i];
     ofstream fout(foutname, ios::binary);
     cout << obs.getNumElem();
     fout.write((char*)buff, obs.getNumElem());
@@ -100,7 +100,7 @@ void decompress(const char *fname, const char *foutname) {
 }
 
 int main() {
-//    compress("t_input.dat", "t_output.dat", 8); // about 7.5M/s
+    compress("t_input.dat", "t_output.dat", 8); // about 7.5M/s
     decompress("t_output.dat", "t_decompressed.dat");
     return 0;
 }
