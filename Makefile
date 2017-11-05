@@ -16,4 +16,4 @@ test_result:
 	cmp t_input.dat t_decompressed.dat
 
 test_memory:
-	valgrind ./main c t_input.dat t_output.dat
+	valgrind --leak-check=full ./main c t_input.dat t_output.dat

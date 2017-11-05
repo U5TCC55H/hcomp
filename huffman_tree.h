@@ -10,6 +10,8 @@ public:
     ~HuffmanTree() {
         delete[] weight;
         delete[] code;
+        delete[] childL;
+        delete[] childR;
     }
     const boost::dynamic_bitset<unsigned char> & encode(unsigned char ch);
     void decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs);
@@ -18,9 +20,12 @@ private:
     void findmin(int &m1, int &m2);
     void merge(int m1, int m2);
 
-    float *weight;
     int numChar;
+    float *weight;
     int *root;
+    int oracle;
+    int *childL;
+    int *childR;
     boost::dynamic_bitset<unsigned char> *code;
 };
 
