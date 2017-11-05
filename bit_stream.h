@@ -14,6 +14,12 @@ using namespace std;
 class BitStream {
 public:
     BitStream(int elemSize = 8);
+    ~BitStream() {
+        if (bitset) {
+            delete bitset;
+            bitset = nullptr;
+        }
+    }
     bool fromFile(const char *fname);
     unsigned char operator[](int idx) const;
     int getNumElem() const {

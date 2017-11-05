@@ -7,6 +7,10 @@
 class HuffmanTree {
 public:
     HuffmanTree(const float *freq, int num);
+    ~HuffmanTree() {
+        delete[] weight;
+        delete[] code;
+    }
     const boost::dynamic_bitset<unsigned char> & encode(unsigned char ch);
     void decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs);
     int find_match(boost::dynamic_bitset<unsigned char> bs);
