@@ -94,14 +94,14 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
     switch (argv[1][0]) {
-    case 'c':
-        compress(argv[2], argv[3], 8); // about 7.5M/s
-        break;
-    case 'd':
-        decompress(argv[2], argv[3]);
-        break;
-    default:
-        cout << "Unknown option" << endl;
+        case 'c':
+            compress(argv[2], argv[3], 8); // about 7.5M/s
+            break;
+        case 'd':
+            decompress(argv[2], argv[3]);
+            break;
+        default:
+            cout << "Unknown option" << endl;
     }
     return 0;
 }

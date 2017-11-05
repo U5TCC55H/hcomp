@@ -28,12 +28,11 @@ bool BitStream::fromFile(const char *fname)
     }
     // 构造比特流
     bitset = new boost::dynamic_bitset<unsigned char>(buff, buff + st.st_size);
-
+    // 解除映射
     munmap(buff, st.st_size);
     return true;
 }
 
-// 得到第idx个elem
 unsigned char BitStream::operator[](int idx) const
 {
     unsigned char ret = 0;
