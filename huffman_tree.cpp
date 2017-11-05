@@ -69,8 +69,7 @@ void HuffmanTree::merge(int m1, int m2)
     weight[m1] += weight[m2];
 }
 
-void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs)
-{
+void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs) {
     int idx = bs.size() - 1;
     boost::dynamic_bitset<unsigned char> tmp;
     while (idx >= 0)

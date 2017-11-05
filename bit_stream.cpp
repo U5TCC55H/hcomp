@@ -46,10 +46,11 @@ BitStream &BitStream::operator<<(const boost::dynamic_bitset<unsigned char> &bs)
 {
     if (bitset == nullptr)
         bitset = new boost::dynamic_bitset<unsigned char>;
-    for (int i = 0; i < bs.size(); ++i)
+    for (unsigned int i = 0; i < bs.size(); ++i)
     {
         bitset->push_back(bs[i]);
     }
+    return *this;
 }
 
 BitStream &BitStream::operator<<(unsigned char ch)
@@ -57,4 +58,5 @@ BitStream &BitStream::operator<<(unsigned char ch)
     if (bitset == nullptr)
         bitset = new boost::dynamic_bitset<unsigned char>;
     bitset->append(ch);
+    return *this;
 }

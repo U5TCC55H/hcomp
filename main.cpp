@@ -62,10 +62,12 @@ void decompress(const char *fname, const char *foutname) {
     int fd = open(fname, O_RDONLY, 0);
     if (fd == -1)
         return;
+
     // 得到文件大小
     struct stat st;
     if(fstat(fd,&st))
         return;
+
     // 映射到内存
     unsigned char *buff = (unsigned char*)mmap(NULL,st.st_size,PROT_READ,MAP_SHARED,fd,0);
     if (buff == (void*)-1) {
@@ -74,15 +76,20 @@ void decompress(const char *fname, const char *foutname) {
     }
     int numChar = 1 << *(int*)buff;
     HuffmanTree tree((float*)(buff+sizeof(int)), numChar);
+
     // 构造比特流
     boost::dynamic_bitset<unsigned char> bs(buff+sizeof(int)+sizeof(float)*numChar+sizeof(int), buff+st.st_size);
     int padding = *(int*)(buff+sizeof(int)+sizeof(float)*numChar);
     munmap(buff, st.st_size);    
+
+    // 去除padding
     bs.resize(bs.size()-padding);
-    // 解压缩
+
+    // 解压缩，非常耗时
     BitStream obs;
     tree.decode(bs, obs);
-    //
+
+    // 输出到文件
     buff = new unsigned char[obs.getNumElem()];
     for (int i = 0; i < obs.getNumElem(); ++i)
         buff[i] = obs[obs.getNumElem() - 1 - i];
@@ -93,7 +100,7 @@ void decompress(const char *fname, const char *foutname) {
 }
 
 int main() {
-    compress("t_input.dat", "t_output.dat", 8);
+//    compress("t_input.dat", "t_output.dat", 8); // about 7.5M/s
     decompress("t_output.dat", "t_decompressed.dat");
     return 0;
 }
