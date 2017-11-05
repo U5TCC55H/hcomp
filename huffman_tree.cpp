@@ -21,11 +21,6 @@ HuffmanTree::HuffmanTree(const float *freq, int num)
         findmin(m1, m2); // 找到权最小的两个根
         merge(m1, m2);   // 合并，包括更新编码
     }
-/*    cerr << "code======" << endl;
-    for (int i = 0; i < num; ++i)
-    {
-        cerr << i << ":\t" << code[i] << endl;
-    } */
     memcpy(weight, freq, sizeof(float) * num);
 
     delete[] root;
@@ -33,7 +28,6 @@ HuffmanTree::HuffmanTree(const float *freq, int num)
 
 const boost::dynamic_bitset<unsigned char> &HuffmanTree::encode(unsigned char ch)
 {
-    cerr << (int)ch << "\tencoded as \t" << code[ch] << endl;
     return code[ch];
 }
 
@@ -87,7 +81,6 @@ void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, BitStre
         int seek = find_match(tmp);
         if (seek != -1)
         {
-            cerr << tmp << "\tdecoded as\t" << seek << endl;
             obs << (unsigned char)seek;
             tmp.resize(0);
         }

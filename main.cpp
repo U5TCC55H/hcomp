@@ -37,10 +37,6 @@ void compress(const char *ifname, const char *ofname, int elemSize) {
         cerr << "failed to open file" << endl;
     }
     int numElem = bs.getNumElem();
-
-    cerr << "Code before compress:" << endl; 
-    cerr << bs << endl;
-    
     // 统计频率
     float *freq = new float[numChar];
     for (int i = 0; i < numChar; ++i)
@@ -56,8 +52,6 @@ void compress(const char *ifname, const char *ofname, int elemSize) {
     for (int i = 0; i < numElem; ++i) {
         obs << tree.encode(bs[i]);
     }
-    cerr << "Encoded:" << endl;
-    cerr << obs << endl;
     save(ofname, elemSize, freq, obs);
 
     delete[] freq;
@@ -85,14 +79,10 @@ void decompress(const char *fname, const char *foutname) {
     int padding = *(int*)(buff+sizeof(int)+sizeof(float)*numChar);
     munmap(buff, st.st_size);    
     bs.resize(bs.size()-padding);
-    cerr << "Encoded:" << endl;
-    cerr << bs << endl;
     // 解压缩
     BitStream obs;
     tree.decode(bs, obs);
     //
-    cerr << "Decoded:" << endl;
-    cerr << obs << endl;
     buff = new unsigned char[obs.getNumElem()];
     for (int i = 0; i < obs.getNumElem(); ++i)
         buff[i] = obs[obs.getNumElem() - 1 - i];
