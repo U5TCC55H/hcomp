@@ -33,7 +33,7 @@ void compress(const char *ifname, const char *ofname, int elemSize) {
     const int numChar = 1 << elemSize;
     // 读取比特流
     BitStream bs(elemSize);
-    if (!bs.fromFile("input.dat")) {
+    if (!bs.fromFile(ifname)) {
         cerr << "failed to open file" << endl;
     }
     int numElem = bs.getNumElem();
@@ -93,7 +93,7 @@ void decompress(const char *fname, const char *foutname) {
 }
 
 int main() {
-    compress("input.dat", "output.dat", 8);
-    decompress("output.dat", "decompressed.dat");
+    compress("t_input.dat", "t_output.dat", 8);
+    decompress("t_output.dat", "t_decompressed.dat");
     return 0;
 }
