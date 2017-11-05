@@ -17,6 +17,9 @@ void save(const char *fname, int elemSize, float *freq, const BitStream &bs) {
     fout.write((char*)&elemSize, sizeof(int));
     // 保存频率表
     fout.write((char*)freq, sizeof(float) * (1 << elemSize));
+    // 保存padding
+    int padding = (8-bs.getNumBit() % 8)%8;
+    fout.write((char*)&padding, sizeof(int));
     // 保存压缩后的比特流
     unsigned char *buff = new unsigned char[bs.getNumElem()];
     for (int i = 0; i < bs.getNumElem(); ++i)
@@ -33,7 +36,11 @@ void compress(const char *ifname, const char *ofname, int elemSize) {
     if (!bs.fromFile("input.dat")) {
         cerr << "failed to open file" << endl;
     }
-    int numElem = bs.getNumElem();    
+    int numElem = bs.getNumElem();
+
+    cerr << "Code before compress:" << endl; 
+    cerr << bs << endl;
+    
     // 统计频率
     float *freq = new float[numChar];
     for (int i = 0; i < numChar; ++i)
@@ -49,13 +56,14 @@ void compress(const char *ifname, const char *ofname, int elemSize) {
     for (int i = 0; i < numElem; ++i) {
         obs << tree.encode(bs[i]);
     }
-    cout << obs << endl;
+    cerr << "Encoded:" << endl;
+    cerr << obs << endl;
     save(ofname, elemSize, freq, obs);
 
     delete[] freq;
 }
 
-void decompress(const char *fname) {
+void decompress(const char *fname, const char *foutname) {
     // 打开文件
     int fd = open(fname, O_RDONLY, 0);
     if (fd == -1)
@@ -73,17 +81,29 @@ void decompress(const char *fname) {
     int numChar = 1 << *(int*)buff;
     HuffmanTree tree((float*)(buff+sizeof(int)), numChar);
     // 构造比特流
-    boost::dynamic_bitset<unsigned char> bs(buff+sizeof(int)+sizeof(float)*numChar, buff+st.st_size);
-    
+    boost::dynamic_bitset<unsigned char> bs(buff+sizeof(int)+sizeof(float)*numChar+sizeof(int), buff+st.st_size);
+    int padding = *(int*)(buff+sizeof(int)+sizeof(float)*numChar);
+    munmap(buff, st.st_size);    
+    bs.resize(bs.size()-padding);
+    cerr << "Encoded:" << endl;
+    cerr << bs << endl;
+    // 解压缩
     BitStream obs;
     tree.decode(bs, obs);
-    
-
-    munmap(buff, st.st_size);
+    //
+    cerr << "Decoded:" << endl;
+    cerr << obs << endl;
+    buff = new unsigned char[obs.getNumElem()];
+    for (int i = 0; i < obs.getNumElem(); ++i)
+        buff[i] = obs[obs.getNumElem() - 1 - i];
+    ofstream fout(foutname, ios::binary);
+    cout << obs.getNumElem();
+    fout.write((char*)buff, obs.getNumElem());
+    fout.close();
 }
 
 int main() {
-    compress("input.dat", "output.dat", 4);
+    compress("input.dat", "output.dat", 8);
     decompress("output.dat", "decompressed.dat");
     return 0;
 }
