@@ -1,4 +1,4 @@
-flags=-lprofiler -O3 -Wall
+flags=-O3 -Wall
 
 main: main.o bit_stream.o huffman_tree.o
 	g++ ${flags} -o $@ $^
@@ -10,7 +10,9 @@ clean:
 	rm -f *.o main
 
 test: main
-	bash ./test.sh
+	bash ./test.sh t_input_zero.dat
+	bash ./test.sh t_input_random.dat
+	bash ./test.sh t_input_sda1.dat
 
 test_memory: main
 	valgrind --leak-check=full --show-leak-kinds=all ./main c t_input.dat t_output.dat
