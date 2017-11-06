@@ -11,8 +11,8 @@ clean:
 test: test_result test_memory
 
 test_result:
-	./main c t_input.dat t_output.dat
-	./main d t_output.dat t_decompressed.dat
+	bash -c 'time ./main c t_input.dat t_output.dat'
+	bash -c 'time ./main d t_output.dat t_decompressed.dat'
 	cmp t_input.dat t_decompressed.dat
 
 test_memory:
