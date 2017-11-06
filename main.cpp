@@ -11,45 +11,51 @@ using namespace std;
 #include "bit_stream.h"
 #include "huffman_tree.h"
 
-void compress(const char *ifname, const char *ofname, int elemSize) {
-    const int numChar = 1 << elemSize;
-    // 读取比特流
-    BitStream bs(elemSize);
-    if (!bs.fromFile(ifname)) {
-        cerr << "failed to open file" << endl;
-    }
-    int numElem = bs.getNumElem();
+void compress(const char *ifname, const char *ofname) {
+    // 打开文件
+    int fd = open(ifname, O_RDONLY, 0);
+    if (fd == -1)
+        return;
+    // 得到文件大小
+    struct stat st;
+    if(fstat(fd,&st))
+        return;
+    // 映射到内存
+    unsigned char *buff = (unsigned char*)mmap(NULL,st.st_size,PROT_READ,MAP_SHARED,fd,0);
+    if (buff == (void*)-1) {
+        buff = NULL;
+        return;
+            }
     // 统计频率
-    float *freq = new float[numChar];
-    for (int i = 0; i < numChar; ++i)
+    float *freq = new float[256];
+    for (int i = 0; i < 256; ++i)
         freq[i] = 0;
-    for (int i = 0;  i < numElem; ++i)
-        ++freq[bs[i]];
-    for (int i = 0; i < numChar; ++i)
-        freq[i] /= numElem;
+    for (int i = 0;  i < st.st_size; ++i)
+        ++freq[buff[i]];
+    for (int i = 0; i < 256; ++i)
+        freq[i] /= st.st_size;
     // 根据freq构造Huffman树
-    HuffmanTree tree(freq, numChar);
+    HuffmanTree tree(freq, 256);
     // 编码
     BitStream obs;
-    for (int i = 0; i < numElem; ++i) {
-        obs << tree.encode(bs[i]);
+    for (int i = 0; i < st.st_size; ++i) {
+        obs << tree.encode(buff[i]);
     }
+    munmap(buff, st.st_size);
     // 打开文件
     ofstream fout(ofname, ios::binary);
-    // 保存压缩粒度
-    fout.write((char*)&elemSize, sizeof(int));
     // 保存频率表
-    fout.write((char*)freq, sizeof(float) * (1 << elemSize));
+    fout.write((char*)freq, sizeof(float) * 256);
     delete[] freq;
     // 保存padding
     int padding = (8-obs.getNumBit() % 8)%8;
     fout.write((char*)&padding, sizeof(int));
     // 保存压缩后的比特流
-    unsigned char *buff = new unsigned char[obs.getNumElem()];
+    unsigned char *bufff = new unsigned char[obs.getNumElem()];
     for (int i = 0; i < obs.getNumElem(); ++i)
-        buff[i] = obs[i];
-    fout.write((char*)buff, sizeof(unsigned char) * obs.getNumElem());
-    delete[] buff;
+        bufff[i] = obs[i];
+    fout.write((char*)bufff, sizeof(unsigned char) * obs.getNumElem());
+    delete[] bufff;
     fout.close();
 }
 
@@ -68,11 +74,10 @@ void decompress(const char *fname, const char *foutname) {
         buff = NULL;
         return;
     }
-    int numChar = 1 << *(int*)buff;
-    HuffmanTree tree((float*)(buff+sizeof(int)), numChar);
+    HuffmanTree tree((float*)buff, 256);
     // 构造比特流
-    boost::dynamic_bitset<unsigned char> bs(buff+sizeof(int)+sizeof(float)*numChar+sizeof(int), buff+st.st_size);
-    int padding = *(int*)(buff+sizeof(int)+sizeof(float)*numChar);
+    boost::dynamic_bitset<unsigned char> bs(buff + sizeof(float)*256 + sizeof(int), buff+st.st_size);
+    int padding = *(int*)(buff+sizeof(float)*256);
     munmap(buff, st.st_size);    
     // 去除padding
     bs.resize(bs.size()-padding);
@@ -95,7 +100,7 @@ int main(int argc, char *argv[]) {
     }
     switch (argv[1][0]) {
         case 'c':
-            compress(argv[2], argv[3], 8); // about 7.5M/s
+            compress(argv[2], argv[3]); // about 7.5M/s
             break;
         case 'd':
             decompress(argv[2], argv[3]);
