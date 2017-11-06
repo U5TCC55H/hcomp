@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     }
     switch (argv[1][0]) {
         case 'c':
-            compress(argv[2], argv[3]); // about 7.5M/s
+            compress(argv[2], argv[3]);
             break;
         case 'd':
             decompress(argv[2], argv[3]);
