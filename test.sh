@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo "Testing compress..."
-time ./main c $1 t_output.dat
+time ./hcomp c $1 t_output.dat
 
 echo "Testing decompress..."
-time ./main d t_output.dat t_decompressed.dat
+time ./hcomp d t_output.dat t_decompressed.dat
 
 echo
 if cmp $1 t_decompressed.dat
