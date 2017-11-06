@@ -54,8 +54,9 @@ void compress(const char *ifname, const char *ofname) {
     fout.write((char*)&st.st_size, sizeof(st.st_size));
     // 保存压缩后的比特流
     unsigned char *bufff = new unsigned char[obs.getNumElem()];
+    unsigned char *obsBuff = obs.asBuff();
     for (int i = 0; i < obs.getNumElem(); ++i)
-        bufff[i] = obs[i];
+        bufff[i] = obsBuff[i];
     fout.write((char*)bufff, sizeof(unsigned char) * obs.getNumElem());
     delete[] bufff;
     fout.close();

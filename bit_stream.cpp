@@ -8,6 +8,11 @@ BitStream::BitStream(int elemSize)
     bitset = new boost::dynamic_bitset<unsigned char>();
 }
 
+unsigned char * BitStream::asBuff() {
+    boost::to_block_range(*bitset, std::back_inserter(byteVector));
+    return &(byteVector[0]);
+}
+
 // 从文件读取比特流，失败返回false
 bool BitStream::fromFile(const char *fname)
 {

@@ -33,11 +33,13 @@ public:
     friend ostream & operator<<(ostream &os, const BitStream &bs) {
         return os << *(bs.bitset);
     }
+    unsigned char *asBuff();
 private:
     int elemSize;
     int seek;
     boost::dynamic_bitset<unsigned char> *bitset;
     int buff_len;
+    std::vector<unsigned char> byteVector;
 };
 
 #endif
