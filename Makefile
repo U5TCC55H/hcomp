@@ -21,3 +21,4 @@ prof: main
 	pprof -gv ./main prof.out
 	bash -c 'CPUPROFILE=prof.out ./main d ./t_output.dat ./t_decompressed.dat'
 	pprof -gv ./main prof.out
+	rm prof.out
