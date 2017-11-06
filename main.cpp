@@ -91,6 +91,7 @@ void decompress(const char *fname, const char *foutname) {
     tree.decode(bs, buff);    
     ofstream fout(foutname, ios::binary);
     fout.write((char*)buff, size);
+    delete[] buff;
     fout.close();
 }
 

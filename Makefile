@@ -1,4 +1,4 @@
-flags=-lprofiler -O3 -g -Wall
+flags=-lprofiler -O3 -Wall
 
 main: main.o bit_stream.o huffman_tree.o
 	g++ ${flags} -o $@ $^
@@ -10,15 +10,11 @@ clean:
 	rm *.o
 	rm main
 
-test: test_correct test_memory
-
-test_correct: main
-	bash -c 'time ./main c t_input.dat t_output.dat'
-	bash -c 'time ./main d t_output.dat t_decompressed.dat'
-	cmp t_input.dat t_decompressed.dat
+test: main
+	bash ./test.sh
 
 test_memory: main
-	valgrind --leak-check=full ./main c t_input.dat t_output.dat
+	valgrind --leak-check=full --show-leak-kinds=all ./main c t_input.dat t_output.dat
 
 prof: main
 	bash -c 'CPUPROFILE=prof.out ./main c ./t_input.dat ./t_output.dat'

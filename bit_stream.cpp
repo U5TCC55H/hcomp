@@ -36,6 +36,7 @@ bool BitStream::fromFile(const char *fname)
     bitset = new boost::dynamic_bitset<unsigned char>(buff, buff + st.st_size);
     // 解除映射
     munmap(buff, st.st_size);
+    close(fd);
     return true;
 }
 
