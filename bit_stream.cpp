@@ -5,12 +5,13 @@ BitStream::BitStream(int elemSize)
 {
     if (elemSize > 0 && elemSize <= 8)
         this->elemSize = elemSize;
+    bitset = new boost::dynamic_bitset<unsigned char>();
 }
 
 // 从文件读取比特流，失败返回false
 bool BitStream::fromFile(const char *fname)
 {
-    bitset = nullptr;
+    delete bitset; bitset = nullptr;
     // 打开文件
     int fd = open(fname, O_RDONLY, 0);
     if (fd == -1)
@@ -43,19 +44,17 @@ unsigned char BitStream::operator[](int idx) const
 
 BitStream &BitStream::operator<<(const boost::dynamic_bitset<unsigned char> &bs)
 {
-    if (bitset == nullptr)
-        bitset = new boost::dynamic_bitset<unsigned char>;
+    unsigned int originSize = bitset->size();
+    bitset->resize(originSize + bs.size());
     for (unsigned int i = 0; i < bs.size(); ++i)
     {
-        bitset->push_back(bs[i]);
+        (*bitset)[originSize + i] = bs[i];
     }
     return *this;
 }
 
 BitStream &BitStream::operator<<(unsigned char ch)
 {
-    if (bitset == nullptr)
-        bitset = new boost::dynamic_bitset<unsigned char>;
     bitset->append(ch);
     return *this;
 }
