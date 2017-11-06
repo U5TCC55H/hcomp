@@ -7,8 +7,7 @@ main: main.o bit_stream.o huffman_tree.o
 	g++ ${flags} -c $^
 
 clean:
-	rm *.o
-	rm main
+	rm -f *.o main
 
 test: main
 	bash ./test.sh
