@@ -84,7 +84,7 @@ void HuffmanTree::merge(int m1, int m2)
 }
 
 void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs) {
-    for (int i = 0, cur = oracle; i < bs.size(); ++i) {
+    for (unsigned int i = 0, cur = oracle; i < bs.size(); ++i) {
         cur = bs[i]? childR[cur] : childL[cur];
         if (childL[cur] == -1 && childR[cur] == -1) {
             obs << (unsigned char)cur;
