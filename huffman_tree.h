@@ -14,10 +14,10 @@ public:
         delete[] childR;
     }
     const boost::dynamic_bitset<unsigned char> & encode(unsigned char ch);
-    void decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs);
-    int find_match(boost::dynamic_bitset<unsigned char> bs);
+    void decode(const boost::dynamic_bitset<unsigned char> &bs, unsigned char *buff);
+    int findMatch(boost::dynamic_bitset<unsigned char> bs);
 private:
-    void findmin(int &m1, int &m2);
+    void findMin(int &m1, int &m2);
     void merge(int m1, int m2);
 
     int numChar;

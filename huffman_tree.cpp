@@ -21,7 +21,7 @@ HuffmanTree::HuffmanTree(const float *freq, int num)
     for (int _ = 0; _ < num - 1; ++_)
     {
         int m1, m2;
-        findmin(m1, m2); // 找到权最小的两个根
+        findMin(m1, m2); // 找到权最小的两个根
         merge(m1, m2);   // 合并，包括更新编码
     }
     --oracle;
@@ -36,7 +36,7 @@ const boost::dynamic_bitset<unsigned char> &HuffmanTree::encode(unsigned char ch
 }
 
 // 考虑到树的大小，这点开销微不足道
-void HuffmanTree::findmin(int &m1, int &m2)
+void HuffmanTree::findMin(int &m1, int &m2)
 {
     m1 = root[0];
     for (int i = 0; i < numChar; ++i)
@@ -83,17 +83,18 @@ void HuffmanTree::merge(int m1, int m2)
     ++oracle;
 }
 
-void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, BitStream &obs) {
+void HuffmanTree::decode(const boost::dynamic_bitset<unsigned char> &bs, unsigned char *buff) {
+    unsigned int seek = 0;
     for (unsigned int i = 0, cur = oracle; i < bs.size(); ++i) {
         cur = bs[i]? childR[cur] : childL[cur];
         if (childL[cur] == -1 && childR[cur] == -1) {
-            obs << (unsigned char)cur;
+            buff[seek++] = (unsigned char)cur;
             cur = oracle;
         }
     }
 }
 
-int HuffmanTree::find_match(boost::dynamic_bitset<unsigned char> bs)
+int HuffmanTree::findMatch(boost::dynamic_bitset<unsigned char> bs)
 {
     for (int i = 0; i < numChar; ++i)
     {
